@@ -37,9 +37,23 @@ export interface PhotoItem {
   materialId: string;
   name: string;
   url: string;
+  originalUrl?: string;
   uploadedAt: string;
   status: 'pending' | 'approved' | 'rejected';
   remark?: string;
+  cropInfo?: {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  };
+}
+
+export interface ApplicantInfo {
+  name: string;
+  idNumber: string;
+  checkPassed: boolean | null;
+  checkTime?: string;
 }
 
 export interface ProgressStep {
