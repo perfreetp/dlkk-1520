@@ -4,7 +4,6 @@ import type { PhotoItem, ApplicantInfo } from '@/types';
 
 interface AppState {
   materialChecked: string[];
-  submitChecked: string[];
   photos: PhotoItem[];
   noticesRead: string[];
   applicantInfo: ApplicantInfo;
@@ -13,11 +12,11 @@ interface AppState {
 interface AppContextValue extends AppState {
   toggleMaterialChecked: (id: string) => void;
   setMaterialCheckedList: (ids: string[]) => void;
-  toggleSubmitChecked: (id: string) => void;
-  setSubmitCheckedList: (ids: string[]) => void;
+  isMaterialChecked: (id: string) => boolean;
   addOrUpdatePhoto: (photo: PhotoItem) => void;
   removePhoto: (materialId: string) => void;
   setPhotos: (photos: PhotoItem[]) => void;
+  isNoticeRead: (id: string) => boolean;
   markNoticeRead: (id: string) => void;
   markAllNoticesRead: () => void;
   setApplicantInfo: (info: Partial<ApplicantInfo>) => void;
@@ -31,7 +30,6 @@ const defaultApplicantInfo: ApplicantInfo = {
 
 const defaultState: AppState = {
   materialChecked: [],
-  submitChecked: [],
   photos: [],
   noticesRead: [],
   applicantInfo: defaultApplicantInfo
@@ -42,7 +40,6 @@ const AppContext = createContext<AppContextValue | null>(null);
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(() => ({
     materialChecked: getStorage<string[]>(StorageKeys.MATERIAL_CHECKED, []),
-    submitChecked: getStorage<string[]>(StorageKeys.SUBMIT_CHECKED, []),
     photos: getStorage<PhotoItem[]>(StorageKeys.PHOTOS, []),
     noticesRead: getStorage<string[]>(StorageKeys.NOTICES_READ, []),
     applicantInfo: getStorage<ApplicantInfo>(StorageKeys.APPLICANT_INFO, defaultApplicantInfo)
@@ -51,10 +48,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setStorage(StorageKeys.MATERIAL_CHECKED, state.materialChecked);
   }, [state.materialChecked]);
-
-  useEffect(() => {
-    setStorage(StorageKeys.SUBMIT_CHECKED, state.submitChecked);
-  }, [state.submitChecked]);
 
   useEffect(() => {
     setStorage(StorageKeys.PHOTOS, state.photos);
@@ -84,21 +77,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ ...prev, materialChecked: ids }));
   }, []);
 
-  const toggleSubmitChecked = useCallback((id: string) => {
-    setState(prev => {
-      const exists = prev.submitChecked.includes(id);
-      return {
-        ...prev,
-        submitChecked: exists
-          ? prev.submitChecked.filter(i => i !== id)
-          : [...prev.submitChecked, id]
-      };
-    });
-  }, []);
-
-  const setSubmitCheckedList = useCallback((ids: string[]) => {
-    setState(prev => ({ ...prev, submitChecked: ids }));
-  }, []);
+  const isMaterialChecked = useCallback((id: string) => {
+    return state.materialChecked.includes(id);
+  }, [state.materialChecked]);
 
   const addOrUpdatePhoto = useCallback((photo: PhotoItem) => {
     setState(prev => {
@@ -117,6 +98,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const setPhotos = useCallback((photos: PhotoItem[]) => {
     setState(prev => ({ ...prev, photos }));
   }, []);
+
+  const isNoticeRead = useCallback((id: string) => {
+    return state.noticesRead.includes(id);
+  }, [state.noticesRead]);
 
   const markNoticeRead = useCallback((id: string) => {
     setState(prev => {
@@ -140,11 +125,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     ...state,
     toggleMaterialChecked,
     setMaterialCheckedList,
-    toggleSubmitChecked,
-    setSubmitCheckedList,
+    isMaterialChecked,
     addOrUpdatePhoto,
     removePhoto,
     setPhotos,
+    isNoticeRead,
     markNoticeRead,
     markAllNoticesRead,
     setApplicantInfo

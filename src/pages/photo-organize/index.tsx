@@ -20,6 +20,8 @@ const PhotoOrganizePage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState(materialCategories[0].id);
   const [showCropGuide, setShowCropGuide] = useState(false);
   const [showCropper, setShowCropper] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewPhoto, setPreviewPhoto] = useState<PhotoItem | null>(null);
   const [currentMaterial, setCurrentMaterial] = useState<{ id: string; name: string } | null>(null);
   const [tempPhotoUrl, setTempPhotoUrl] = useState('');
   const [cropInfo, setCropInfo] = useState<CropInfo>({ left: 10, top: 10, width: 80, height: 80 });
@@ -118,27 +120,17 @@ const PhotoOrganizePage: React.FC = () => {
   };
 
   const handlePreviewPhoto = (photo: PhotoItem) => {
-    if (photo.cropInfo) {
-      Taro.showModal({
-        title: photo.name,
-        content: `已裁剪保存\n裁剪区域：左 ${photo.cropInfo.left}%  上 ${photo.cropInfo.top}%\n尺寸：${photo.cropInfo.width}% × ${photo.cropInfo.height}%`,
-        confirmText: '查看原图',
-        cancelText: '关闭',
-        success: (res) => {
-          if (res.confirm && photo.originalUrl) {
-            Taro.previewImage({
-              urls: [photo.originalUrl],
-              current: photo.originalUrl
-            });
-          }
-        }
-      });
-    } else {
-      Taro.previewImage({
-        urls: [photo.url],
-        current: photo.url
-      });
-    }
+    setPreviewPhoto(photo);
+    setShowPreview(true);
+  };
+
+  const handleViewOriginal = () => {
+    if (!previewPhoto) return;
+    const originalUrl = previewPhoto.originalUrl || previewPhoto.url;
+    Taro.previewImage({
+      urls: [originalUrl],
+      current: originalUrl
+    });
   };
 
   const handleDeletePhoto = (itemId: string) => {
@@ -489,6 +481,31 @@ const PhotoOrganizePage: React.FC = () => {
             <Button className={styles.cropperBtnPrimary} onClick={handleCropConfirm}>
               保存裁剪
             </Button>
+          </View>
+        </View>
+      )}
+
+      {showPreview && previewPhoto && (
+        <View className={styles.previewModal} onClick={() => setShowPreview(false)}>
+          <View className={styles.previewModalContent} onClick={e => e.stopPropagation()}>
+            <View className={styles.previewHeader}>
+              <Text className={styles.previewTitle}>
+                {previewPhoto.name}
+                {previewPhoto.cropInfo && <Text className={styles.previewCroppedTag}>（已裁剪）</Text>}
+              </Text>
+              <Text className={styles.previewClose} onClick={() => setShowPreview(false)}>✕</Text>
+            </View>
+            <View className={styles.previewBody}>
+              {renderCroppedImage(previewPhoto, styles.previewImage)}
+            </View>
+            <View className={styles.previewActions}>
+              <Button className={styles.previewBtnSecondary} onClick={handleViewOriginal}>
+                查看原图
+              </Button>
+              <Button className={styles.previewBtnPrimary} onClick={() => setShowPreview(false)}>
+                关闭
+              </Button>
+            </View>
           </View>
         </View>
       )}

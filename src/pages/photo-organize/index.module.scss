@@ -610,3 +610,114 @@
     background: rgba(255, 255, 255, 0.3);
   }
 }
+
+.previewModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl;
+}
+
+.previewModalContent {
+  width: 100%;
+  max-height: 90vh;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.previewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg $spacing-xl;
+  border-bottom: 1rpx solid $color-divider;
+  flex-shrink: 0;
+}
+
+.previewTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.previewCroppedTag {
+  font-size: $font-size-xs;
+  color: $color-success;
+  font-weight: $font-weight-normal;
+  margin-left: $spacing-xs;
+}
+
+.previewClose {
+  font-size: 40rpx;
+  color: $color-text-tertiary;
+  padding: $spacing-xs;
+}
+
+.previewBody {
+  flex: 1;
+  padding: $spacing-lg;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.previewImage {
+  width: 100%;
+  height: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+}
+
+.previewActions {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-xl;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  border-top: 1rpx solid $color-divider;
+  flex-shrink: 0;
+}
+
+.previewBtnSecondary {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-md;
+  background: $color-bg-hover;
+  color: $color-text-secondary;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-button;
+  transition: all $transition-fast;
+
+  &:active {
+    background: $color-border;
+  }
+}
+
+.previewBtnPrimary {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-md;
+  background: linear-gradient(135deg, $color-primary-light, $color-primary);
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-button;
+  transition: all $transition-fast;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}

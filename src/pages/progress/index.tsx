@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, Button, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
 import classnames from 'classnames';
 import type { ProgressStep, NoticeItem } from '@/types';
+import { useAppStore } from '@/store/AppContext';
+import { generateExportText, saveExportToClipboard } from '@/utils/export';
 
 const progressSteps: ProgressStep[] = [
   {
@@ -41,7 +43,7 @@ const progressSteps: ProgressStep[] = [
   }
 ];
 
-const mockNotices: NoticeItem[] = [
+const baseNotices: NoticeItem[] = [
   {
     id: 'n1',
     title: '材料补正通知',
@@ -112,16 +114,31 @@ const reminders = [
 ];
 
 const ProgressPage: React.FC = () => {
-  const [notices, setNotices] = useState<NoticeItem[]>(mockNotices);
+  const {
+    materialChecked,
+    photos,
+    noticesRead,
+    markNoticeRead,
+    markAllNoticesRead,
+    applicantInfo
+  } = useAppStore();
+
+  const [showExportResult, setShowExportResult] = useState(false);
+  const [exportText, setExportText] = useState('');
+
+  const notices = useMemo(() => {
+    return baseNotices.map(n => ({
+      ...n,
+      read: noticesRead.includes(n.id)
+    }));
+  }, [noticesRead]);
 
   const unreadCount = notices.filter(n => !n.read).length;
   const currentStep = progressSteps.find(s => s.status === 'current') || progressSteps[0];
 
   const handleNoticeClick = (notice: NoticeItem) => {
     if (!notice.read) {
-      setNotices(prev =>
-        prev.map(n => (n.id === notice.id ? { ...n, read: true } : n))
-      );
+      markNoticeRead(notice.id);
     }
 
     Taro.showModal({
@@ -135,25 +152,52 @@ const ProgressPage: React.FC = () => {
   };
 
   const handleMarkAllRead = () => {
-    setNotices(prev => prev.map(n => ({ ...n, read: true })));
+    markAllNoticesRead();
     Taro.showToast({
       title: '全部已读',
       icon: 'success'
     });
   };
 
-  const handleExport = () => {
+  const handleExportChoice = () => {
     Taro.showActionSheet({
-      itemList: ['导出材料清单', '打包所有照片', '导出为PDF'],
-      success: (res) => {
-        const actions = ['导出材料清单', '打包所有照片', '导出为PDF'];
-        Taro.showToast({
-          title: `${actions[res.tapIndex]}功能开发中`,
-          icon: 'none'
-        });
-        console.log('[Progress] export action:', actions[res.tapIndex]);
+      itemList: ['导出材料清单', '打包照片索引', '完整材料包'],
+      success: async (res) => {
+        const titles = ['教师资格认定 - 材料清单', '教师资格认定 - 照片索引', '教师资格认定 - 完整材料包'];
+        const text = generateExportText(
+          {
+            materialChecked,
+            submitChecked: materialChecked,
+            photos,
+            applicantInfo: applicantInfo.name ? applicantInfo : undefined
+          },
+          titles[res.tapIndex]
+        );
+
+        setExportText(text);
+        setShowExportResult(true);
+
+        const success = await saveExportToClipboard(text);
+        if (success) {
+          Taro.showToast({
+            title: '已复制到剪贴板',
+            icon: 'success'
+          });
+        }
+
+        console.log('[Progress] export generated, index:', res.tapIndex);
       }
     });
+  };
+
+  const handleCopyAgain = async () => {
+    const success = await saveExportToClipboard(exportText);
+    if (success) {
+      Taro.showToast({
+        title: '已复制',
+        icon: 'success'
+      });
+    }
   };
 
   const getTypeClass = (type: string) => {
@@ -237,16 +281,7 @@ const ProgressPage: React.FC = () => {
           <Text className={styles.sectionTitle}>
             <Text className={styles.sectionIcon}>🔔</Text> 消息通知
             {unreadCount > 0 && (
-              <Text
-                style={{
-                  background: '#ef4444',
-                  color: '#fff',
-                  fontSize: '20rpx',
-                  padding: '2rpx 12rpx',
-                  borderRadius: '20rpx',
-                  marginLeft: '8rpx'
-                }}
-              >
+              <Text className={styles.unreadBadge}>
                 {unreadCount}
               </Text>
             )}
@@ -317,11 +352,35 @@ const ProgressPage: React.FC = () => {
               一键导出整理好的材料包，方便备份和打印
             </Text>
           </View>
-          <Button className={styles.exportBtn} onClick={handleExport}>
+          <Button className={styles.exportBtn} onClick={handleExportChoice}>
             导出
           </Button>
         </View>
       </View>
+
+      {showExportResult && (
+        <View className={styles.exportModal} onClick={() => setShowExportResult(false)}>
+          <View className={styles.exportModalContent} onClick={e => e.stopPropagation()}>
+            <View className={styles.exportModalHeader}>
+              <Text className={styles.exportModalTitle}>材料包已生成</Text>
+              <Text className={styles.exportModalClose} onClick={() => setShowExportResult(false)}>
+                ✕
+              </Text>
+            </View>
+            <ScrollView scrollY className={styles.exportModalBody}>
+              <Text className={styles.exportText}>{exportText}</Text>
+            </ScrollView>
+            <View className={styles.exportModalActions}>
+              <Button className={styles.exportModalBtnSecondary} onClick={() => setShowExportResult(false)}>
+                关闭
+              </Button>
+              <Button className={styles.exportModalBtnPrimary} onClick={handleCopyAgain}>
+                复制内容
+              </Button>
+            </View>
+          </View>
+        </View>
+      )}
     </ScrollView>
   );
 };

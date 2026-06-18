@@ -350,3 +350,116 @@
   background: $color-warning-bg;
   color: $color-warning;
 }
+
+.orderPhotoTag {
+  display: inline-block;
+  margin-top: $spacing-xs;
+  font-size: $font-size-xs;
+  color: $color-primary;
+  background: $color-primary-bg;
+  padding: 2rpx 12rpx;
+  border-radius: $radius-xs;
+}
+
+.exportModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl;
+}
+
+.exportModalContent {
+  width: 100%;
+  max-height: 85vh;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.exportModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg $spacing-xl;
+  border-bottom: 1rpx solid $color-divider;
+  flex-shrink: 0;
+}
+
+.exportModalTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.exportModalClose {
+  font-size: 40rpx;
+  color: $color-text-tertiary;
+  padding: $spacing-xs;
+}
+
+.exportModalBody {
+  flex: 1;
+  padding: $spacing-lg $spacing-xl;
+  background: #f1f5f9;
+  overflow-y: auto;
+}
+
+.exportText {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-family: Consolas, Monaco, monospace;
+}
+
+.exportModalActions {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-xl;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  border-top: 1rpx solid $color-divider;
+  flex-shrink: 0;
+}
+
+.exportModalBtnSecondary {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-md;
+  background: $color-bg-hover;
+  color: $color-text-secondary;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-button;
+  transition: all $transition-fast;
+
+  &:active {
+    background: $color-border;
+  }
+}
+
+.exportModalBtnPrimary {
+  @include button-reset;
+  flex: 1.5;
+  height: $button-height-md;
+  background: linear-gradient(135deg, $color-primary-light, $color-primary);
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-button;
+  transition: all $transition-fast;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}

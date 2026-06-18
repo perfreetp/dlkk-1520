@@ -9,9 +9,8 @@ import { generateExportText, saveExportToClipboard } from '@/utils/export';
 
 const SubmitListPage: React.FC = () => {
   const {
-    submitChecked,
-    toggleSubmitChecked,
     materialChecked,
+    toggleMaterialChecked,
     photos,
     applicantInfo
   } = useAppStore();
@@ -51,21 +50,21 @@ const SubmitListPage: React.FC = () => {
     return submitOrder.reduce((sum, group) => sum + group.items.length, 0);
   }, [submitOrder]);
 
-  const checkedCount = submitChecked.filter(id =>
+  const checkedCount = materialChecked.filter(id =>
     submitOrder.some(g => g.items.some((i: any) => i.id === id))
   ).length;
 
   const allChecked = checkedCount === totalCount;
 
   const toggleItem = (itemId: string) => {
-    toggleSubmitChecked(itemId);
+    toggleMaterialChecked(itemId);
   };
 
   const handleExport = async () => {
     const text = generateExportText(
       {
         materialChecked,
-        submitChecked,
+        submitChecked: materialChecked,
         photos,
         applicantInfo: applicantInfo.name ? applicantInfo : undefined
       },
@@ -141,12 +140,12 @@ const SubmitListPage: React.FC = () => {
                 key={item.id}
                 className={classnames(
                   styles.orderItem,
-                  submitChecked.includes(item.id) && styles.orderItemChecked
+                  materialChecked.includes(item.id) && styles.orderItemChecked
                 )}
                 onClick={() => toggleItem(item.id)}
               >
                 <View className={styles.orderNumber}>
-                  {submitChecked.includes(item.id) ? '✓' : item.orderNum}
+                  {materialChecked.includes(item.id) ? '✓' : item.orderNum}
                 </View>
                 <View className={styles.orderInfo}>
                   <Text className={styles.orderName}>{item.name}</Text>
@@ -158,10 +157,10 @@ const SubmitListPage: React.FC = () => {
                 <View
                   className={classnames(
                     styles.orderCheck,
-                    submitChecked.includes(item.id) && styles.orderItemChecked
+                    materialChecked.includes(item.id) && styles.orderItemChecked
                   )}
                 >
-                  {submitChecked.includes(item.id) && (
+                  {materialChecked.includes(item.id) && (
                     <Text className={styles.checkIcon}>✓</Text>
                   )}
                 </View>
