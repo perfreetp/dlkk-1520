@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import { materialCategories, agentInstructions } from '@/data/materials';
 import { useAppStore } from '@/store/AppContext';
 import { generateExportText, saveExportToClipboard } from '@/utils/export';
+import { buildPrecheckReport } from '@/utils/precheck';
 
 const SubmitListPage: React.FC = () => {
   const {
@@ -61,12 +62,19 @@ const SubmitListPage: React.FC = () => {
   };
 
   const handleExport = async () => {
+    const report = buildPrecheckReport(applicantInfo, materialChecked, photos);
+    const precheckInfo = {
+      passed: report.passed.map(p => ({ title: p.title, detail: p.detail })),
+      needCheck: report.needCheck.map(p => ({ title: p.title, detail: p.detail })),
+      isPassed: report.isPassed
+    };
     const text = generateExportText(
       {
         materialChecked,
         submitChecked: materialChecked,
         photos,
-        applicantInfo: applicantInfo.name ? applicantInfo : undefined
+        applicantInfo: applicantInfo.name ? applicantInfo : undefined,
+        precheckInfo
       },
       '教师资格认定 - 提交清单'
     );

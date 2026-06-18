@@ -506,3 +506,61 @@
     transform: scale(0.98);
   }
 }
+
+.noticeFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: $spacing-md;
+  gap: $spacing-md;
+}
+
+.noticeActions {
+  display: flex;
+  gap: $spacing-sm;
+  flex-shrink: 0;
+}
+
+.noticeActionBtn {
+  @include button-reset;
+  padding: 10rpx 20rpx;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: $color-text-white;
+  background: linear-gradient(135deg, #fbbf24, $color-warning);
+  border-radius: $radius-xs;
+  white-space: nowrap;
+  transition: all $transition-fast;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.noticeActionBtnDone {
+  background: linear-gradient(135deg, $color-primary-light, $color-primary);
+}
+
+.noticeHandled {
+  background: rgba(16, 185, 129, 0.04);
+  border-left: 4rpx solid $color-success;
+  opacity: 0.92;
+}
+
+.noticeHandledTag {
+  flex-shrink: 0;
+  display: inline-block;
+  padding: 4rpx 14rpx;
+  font-size: 20rpx;
+  color: $color-success;
+  background: $color-success-bg;
+  border-radius: $radius-xs;
+  font-weight: $font-weight-medium;
+  margin-left: auto;
+}
+
+.handledBadge {
+  background: linear-gradient(135deg, #fbbf24, $color-warning);
+  margin-left: $spacing-xs;
+}

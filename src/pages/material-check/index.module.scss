@@ -436,3 +436,316 @@
   color: $color-text-primary;
   font-weight: $font-weight-medium;
 }
+
+.reportCard {
+  background: $color-warning-bg;
+  border-left: 6rpx solid $color-warning;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  transition: all $transition-fast;
+
+  &:active {
+    opacity: 0.92;
+    transform: scale(0.995);
+  }
+}
+
+.reportCardPassed {
+  background: $color-success-bg;
+  border-left-color: $color-success;
+}
+
+.reportHeader {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.reportIcon {
+  font-size: 52rpx;
+  flex-shrink: 0;
+}
+
+.reportHeaderInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.reportTitle {
+  display: block;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  line-height: 1.4;
+}
+
+.reportSubtitle {
+  display: block;
+  margin-top: 4rpx;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.reportSummary {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: $radius-md;
+  padding: $spacing-md;
+}
+
+.summaryBox {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.summaryNumber {
+  font-size: 48rpx;
+  font-weight: $font-weight-bold;
+  color: $color-success;
+  line-height: 1.2;
+}
+
+.summaryNumberError {
+  color: $color-warning;
+}
+
+.summaryLabel {
+  display: block;
+  margin-top: 4rpx;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.summaryDivider {
+  width: 1rpx;
+  height: 60rpx;
+  background: $color-border;
+}
+
+.passList {
+  margin-top: $spacing-lg;
+  padding: $spacing-lg;
+  background: $color-success-bg;
+  border-radius: $radius-md;
+}
+
+.passListTitle {
+  display: block;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-success;
+  margin-bottom: $spacing-md;
+}
+
+.passItem {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  padding: $spacing-sm 0;
+  border-bottom: 1rpx dashed rgba(16, 185, 129, 0.2);
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.passDot {
+  flex-shrink: 0;
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  background: $color-success;
+  margin-top: 14rpx;
+}
+
+.passItemTitle {
+  display: block;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  line-height: 1.5;
+}
+
+.passItemDetail {
+  display: block;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  line-height: 1.5;
+  margin-top: 2rpx;
+}
+
+.focusItemRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-md;
+  padding: $spacing-md 0;
+  border-bottom: 1rpx dashed rgba(245, 158, 11, 0.25);
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.focusItemRowLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  flex: 1;
+  min-width: 0;
+}
+
+.focusItemMark {
+  flex-shrink: 0;
+  font-size: $font-size-lg;
+  color: $color-warning;
+  line-height: 1;
+  margin-top: 2rpx;
+}
+
+.focusItemTitle {
+  display: block;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  line-height: 1.5;
+}
+
+.focusItemDetail {
+  display: block;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  line-height: 1.5;
+  margin-top: 2rpx;
+}
+
+.focusItemActions {
+  display: flex;
+  gap: $spacing-xs;
+  flex-shrink: 0;
+}
+
+.focusActionBtn {
+  padding: 8rpx 16rpx;
+  font-size: $font-size-xs;
+  color: $color-primary;
+  background: $color-primary-bg;
+  border-radius: $radius-xs;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+  transition: all $transition-fast;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.focusActionBtnPrimary {
+  background: linear-gradient(135deg, $color-primary-light, $color-primary);
+  color: $color-text-white;
+}
+
+.focusMaterialPanel {
+  margin-top: $spacing-lg;
+  padding: $spacing-lg;
+  background: $color-warning-bg;
+  border-radius: $radius-md;
+  border: 2rpx dashed rgba(245, 158, 11, 0.4);
+}
+
+.focusPanelTitle {
+  display: block;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-warning;
+  margin-bottom: $spacing-md;
+}
+
+.focusMatCard {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-bottom: $spacing-sm;
+  transition: all $transition-fast;
+  border: 2rpx solid transparent;
+
+  &:active {
+    transform: scale(0.99);
+  }
+}
+
+.focusMatCardDone {
+  background: $color-success-bg;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.focusMatCheck {
+  flex-shrink: 0;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 3rpx solid $color-warning;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22rpx;
+  color: transparent;
+  font-weight: $font-weight-bold;
+  transition: all $transition-fast;
+}
+
+.focusMatCheckDone {
+  background: $color-success;
+  border-color: $color-success;
+  color: $color-text-white;
+}
+
+.focusMatInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.focusMatRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: 4rpx;
+}
+
+.focusMatName {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  line-height: 1.4;
+}
+
+.focusMatTag {
+  flex-shrink: 0;
+  display: inline-block;
+  padding: 2rpx 12rpx;
+  font-size: 20rpx;
+  color: $color-primary;
+  background: $color-primary-bg;
+  border-radius: $radius-xs;
+  font-weight: $font-weight-medium;
+}
+
+.focusMatDesc {
+  display: block;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  line-height: 1.5;
+}

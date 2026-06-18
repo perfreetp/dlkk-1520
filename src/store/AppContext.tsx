@@ -6,6 +6,7 @@ interface AppState {
   materialChecked: string[];
   photos: PhotoItem[];
   noticesRead: string[];
+  noticesHandled: string[];
   applicantInfo: ApplicantInfo;
 }
 
@@ -19,6 +20,8 @@ interface AppContextValue extends AppState {
   isNoticeRead: (id: string) => boolean;
   markNoticeRead: (id: string) => void;
   markAllNoticesRead: () => void;
+  isNoticeHandled: (id: string) => boolean;
+  markNoticeHandled: (id: string) => void;
   setApplicantInfo: (info: Partial<ApplicantInfo>) => void;
 }
 
@@ -32,6 +35,7 @@ const defaultState: AppState = {
   materialChecked: [],
   photos: [],
   noticesRead: [],
+  noticesHandled: [],
   applicantInfo: defaultApplicantInfo
 };
 
@@ -42,6 +46,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     materialChecked: getStorage<string[]>(StorageKeys.MATERIAL_CHECKED, []),
     photos: getStorage<PhotoItem[]>(StorageKeys.PHOTOS, []),
     noticesRead: getStorage<string[]>(StorageKeys.NOTICES_READ, []),
+    noticesHandled: getStorage<string[]>(StorageKeys.NOTICES_HANDLED, []),
     applicantInfo: getStorage<ApplicantInfo>(StorageKeys.APPLICANT_INFO, defaultApplicantInfo)
   }));
 
@@ -56,6 +61,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setStorage(StorageKeys.NOTICES_READ, state.noticesRead);
   }, [state.noticesRead]);
+
+  useEffect(() => {
+    setStorage(StorageKeys.NOTICES_HANDLED, state.noticesHandled);
+  }, [state.noticesHandled]);
 
   useEffect(() => {
     setStorage(StorageKeys.APPLICANT_INFO, state.applicantInfo);
@@ -114,6 +123,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ ...prev, noticesRead: ['n1', 'n2', 'n3', 'n4'] }));
   }, []);
 
+  const isNoticeHandled = useCallback((id: string) => {
+    return state.noticesHandled.includes(id);
+  }, [state.noticesHandled]);
+
+  const markNoticeHandled = useCallback((id: string) => {
+    setState(prev => {
+      if (prev.noticesHandled.includes(id)) return prev;
+      return { ...prev, noticesHandled: [...prev.noticesHandled, id] };
+    });
+  }, []);
+
   const setApplicantInfo = useCallback((info: Partial<ApplicantInfo>) => {
     setState(prev => ({
       ...prev,
@@ -132,6 +152,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     isNoticeRead,
     markNoticeRead,
     markAllNoticesRead,
+    isNoticeHandled,
+    markNoticeHandled,
     setApplicantInfo
   };
 

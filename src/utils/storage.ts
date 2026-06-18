@@ -7,6 +7,7 @@ export const StorageKeys = {
   SUBMIT_CHECKED: STORAGE_PREFIX + 'submit_checked',
   PHOTOS: STORAGE_PREFIX + 'photos',
   NOTICES_READ: STORAGE_PREFIX + 'notices_read',
+  NOTICES_HANDLED: STORAGE_PREFIX + 'notices_handled',
   APPLICANT_INFO: STORAGE_PREFIX + 'applicant_info'
 };
 

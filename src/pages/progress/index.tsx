@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, Button, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import type { ProgressStep, NoticeItem } from '@/types';
 import { useAppStore } from '@/store/AppContext';
 import { generateExportText, saveExportToClipboard } from '@/utils/export';
+import { buildPrecheckReport } from '@/utils/precheck';
 
 const progressSteps: ProgressStep[] = [
   {
@@ -46,35 +47,47 @@ const progressSteps: ProgressStep[] = [
 const baseNotices: NoticeItem[] = [
   {
     id: 'n1',
-    title: '材料补正通知',
-    content: '您提交的学历认证报告已过期，请重新下载有效的电子注册备案表后重新上传。',
+    title: '材料补正：学历认证报告过期',
+    content: '您提交的学历认证报告（学信网电子注册备案表）已过期。请重新登录学信网下载有效期内的电子注册备案表（建议选择6个月有效期），并拍照上传到学历证明分类下的「学历认证报告」材料中。',
     type: 'warning',
     date: '2024-01-15 10:30',
-    read: false
+    read: false,
+    relatedMaterialId: 'degree-report',
+    relatedCategoryId: 'education',
+    relatedTab: 'photo-organize',
+    actionLabel: '去拍照上传'
   },
   {
     id: 'n2',
     title: '预审已通过',
-    content: '您提交的材料预审已通过，请预约线下受理时间，携带原件前往现场核验。',
+    content: '您提交的材料预审已通过，请尽快预约线下受理时间，携带所有材料原件前往指定认定机构现场核验。\n\n• 身份证（正反面原件）\n• 毕业证书原件\n• 教师资格考试合格证明\n• 普通话等级证书原件\n• 体检表（近半年内有效）',
     type: 'success',
     date: '2024-01-12 14:20',
     read: false
   },
   {
     id: 'n3',
-    title: '提醒：体检表有效期',
-    content: '您的体检表将于30天后到期，请在有效期内完成认定申请。',
-    type: 'info',
+    title: '证件有效期提醒：体检表',
+    content: '您的体检表将于30天后到期。体检表有效期通常为半年，请在有效期内完成认定申请。如预计可能超期，建议提前联系就近医院重新体检。',
+    type: 'warning',
     date: '2024-01-10 09:00',
-    read: true
+    read: true,
+    relatedMaterialId: 'physical-exam',
+    relatedCategoryId: 'physical',
+    relatedTab: 'material-check',
+    actionLabel: '去核对材料'
   },
   {
     id: 'n4',
     title: '申报成功通知',
-    content: '您的教师资格认定申请已提交成功，请等待预审结果。',
+    content: '您的教师资格认定申请已提交成功！请在「材料预检」页面填写申请人姓名和身份证号，核对重点材料后导出清单，等待后续预审通知。',
     type: 'info',
     date: '2024-01-08 16:45',
-    read: true
+    read: true,
+    relatedMaterialId: '',
+    relatedCategoryId: '',
+    relatedTab: 'material-check',
+    actionLabel: '去填写信息'
   }
 ];
 
@@ -85,7 +98,8 @@ const reminders = [
     desc: '请在有效期内完成认定',
     days: 30,
     icon: '🏥',
-    type: 'warning'
+    type: 'warning' as const,
+    relatedMaterialId: 'physical-exam'
   },
   {
     id: 'r2',
@@ -93,7 +107,8 @@ const reminders = [
     desc: '教师资格考试合格证明',
     days: 180,
     icon: '📜',
-    type: 'info'
+    type: 'info' as const,
+    relatedMaterialId: 'teacher-exam'
   },
   {
     id: 'r3',
@@ -101,7 +116,8 @@ const reminders = [
     desc: '二代居民身份证',
     days: 365,
     icon: '🪪',
-    type: 'info'
+    type: 'info' as const,
+    relatedMaterialId: 'id-card-front'
   },
   {
     id: 'r4',
@@ -109,17 +125,22 @@ const reminders = [
     desc: '学信网电子注册备案表',
     days: 15,
     icon: '🎓',
-    type: 'warning'
+    type: 'warning' as const,
+    relatedMaterialId: 'degree-report'
   }
 ];
+
+type TabBarPage = '/pages/self-check/index' | '/pages/material-check/index' | '/pages/photo-organize/index' | '/pages/submit-list/index' | '/pages/progress/index';
 
 const ProgressPage: React.FC = () => {
   const {
     materialChecked,
     photos,
     noticesRead,
+    noticesHandled,
     markNoticeRead,
     markAllNoticesRead,
+    markNoticeHandled,
     applicantInfo
   } = useAppStore();
 
@@ -127,27 +148,72 @@ const ProgressPage: React.FC = () => {
   const [exportText, setExportText] = useState('');
 
   const notices = useMemo(() => {
-    return baseNotices.map(n => ({
-      ...n,
-      read: noticesRead.includes(n.id)
-    }));
-  }, [noticesRead]);
+    return baseNotices.map(n => {
+      const read = noticesRead.includes(n.id);
+      const handled = noticesHandled.includes(n.id);
+      return { ...n, read, handled };
+    });
+  }, [noticesRead, noticesHandled]);
 
   const unreadCount = notices.filter(n => !n.read).length;
+  const unhandledCount = notices.filter(n => !n.handled && n.relatedMaterialId).length;
   const currentStep = progressSteps.find(s => s.status === 'current') || progressSteps[0];
+
+  useEffect(() => {
+    // 自动检测处理完成：检查相关的材料是否已勾选、已上传照片
+    notices.forEach(notice => {
+      if (!notice.relatedMaterialId || noticesHandled.includes(notice.id)) return;
+      const matChecked = materialChecked.includes(notice.relatedMaterialId);
+      const hasPhoto = photos.some(p => p.materialId === notice.relatedMaterialId);
+      if (matChecked && hasPhoto) {
+        markNoticeHandled(notice.id);
+      }
+    });
+  }, [materialChecked, photos, notices, noticesHandled, markNoticeHandled]);
+
+  const handleGoAction = (notice: NoticeItem) => {
+    const tabMap: Record<string, TabBarPage> = {
+      'material-check': '/pages/material-check/index',
+      'photo-organize': '/pages/photo-organize/index',
+      'self-check': '/pages/self-check/index',
+      'submit-list': '/pages/submit-list/index',
+      'progress': '/pages/progress/index'
+    };
+    const targetTab = notice.relatedTab || 'material-check';
+    const targetUrl = tabMap[targetTab] || ('/pages/' + targetTab + '/index') as TabBarPage;
+    Taro.showToast({
+      title: '正在跳转到' + (notice.actionLabel || '处理页面'),
+      icon: 'none',
+      duration: 800
+    });
+    setTimeout(() => {
+      try {
+        Taro.switchTab({ url: targetUrl as any }).catch(() => {
+          Taro.navigateTo({ url: targetUrl as any }).catch(() => {});
+        });
+      } catch (e) {
+        console.error('[Progress] navigate error:', e);
+      }
+    }, 800);
+    console.log('[Progress] go action for notice:', notice.id, '->', targetUrl);
+  };
 
   const handleNoticeClick = (notice: NoticeItem) => {
     if (!notice.read) {
       markNoticeRead(notice.id);
     }
-
     Taro.showModal({
       title: notice.title,
       content: notice.content,
-      showCancel: false,
-      confirmText: '知道了'
+      showCancel: !!notice.relatedMaterialId,
+      cancelText: '先不处理',
+      confirmText: notice.relatedMaterialId ? (notice.actionLabel || '去处理') : '知道了',
+      success: (res) => {
+        if (res.confirm && notice.relatedMaterialId) {
+          handleGoAction(notice);
+        }
+      }
     });
-
     console.log('[Progress] view notice:', notice.id);
   };
 
@@ -159,17 +225,38 @@ const ProgressPage: React.FC = () => {
     });
   };
 
+  const handleReminderClick = (reminder: typeof reminders[0]) => {
+    const hasRelated = reminder.relatedMaterialId;
+    if (!hasRelated) return;
+    Taro.showActionSheet({
+      itemList: ['查看该材料在材料预检中', '去拍照整理页面上传照片'],
+      success: (res) => {
+        const targetTab: TabBarPage = res.tapIndex === 0
+          ? '/pages/material-check/index'
+          : '/pages/photo-organize/index';
+        Taro.switchTab({ url: targetTab as any }).catch(() => {});
+      }
+    });
+  };
+
   const handleExportChoice = () => {
     Taro.showActionSheet({
       itemList: ['导出材料清单', '打包照片索引', '完整材料包'],
       success: async (res) => {
         const titles = ['教师资格认定 - 材料清单', '教师资格认定 - 照片索引', '教师资格认定 - 完整材料包'];
+        const report = buildPrecheckReport(applicantInfo, materialChecked, photos);
+        const precheckInfo = {
+          passed: report.passed.map(p => ({ title: p.title, detail: p.detail })),
+          needCheck: report.needCheck.map(p => ({ title: p.title, detail: p.detail })),
+          isPassed: report.isPassed
+        };
         const text = generateExportText(
           {
             materialChecked,
             submitChecked: materialChecked,
             photos,
-            applicantInfo: applicantInfo.name ? applicantInfo : undefined
+            applicantInfo: applicantInfo.name ? applicantInfo : undefined,
+            precheckInfo
           },
           titles[res.tapIndex]
         );
@@ -285,6 +372,11 @@ const ProgressPage: React.FC = () => {
                 {unreadCount}
               </Text>
             )}
+            {unhandledCount > 0 && (
+              <Text className={classnames(styles.unreadBadge, styles.handledBadge)}>
+                {unhandledCount}待处理
+              </Text>
+            )}
           </Text>
           {unreadCount > 0 && (
             <Text className={styles.sectionAction} onClick={handleMarkAllRead}>
@@ -298,7 +390,8 @@ const ProgressPage: React.FC = () => {
               key={notice.id}
               className={classnames(
                 styles.noticeCard,
-                !notice.read && styles.noticeUnread
+                !notice.read && styles.noticeUnread,
+                notice.handled && styles.noticeHandled
               )}
               onClick={() => handleNoticeClick(notice)}
             >
@@ -308,9 +401,30 @@ const ProgressPage: React.FC = () => {
                 </Text>
                 <Text className={styles.noticeTitle}>{notice.title}</Text>
                 {!notice.read && <View className={styles.noticeUnreadDot} />}
+                {notice.handled && (
+                  <Text className={styles.noticeHandledTag}>✓ 已处理</Text>
+                )}
               </View>
               <Text className={styles.noticeContent}>{notice.content}</Text>
-              <Text className={styles.noticeDate}>{notice.date}</Text>
+              <View className={styles.noticeFooter}>
+                <Text className={styles.noticeDate}>{notice.date}</Text>
+                {notice.relatedMaterialId && (
+                  <View className={styles.noticeActions}>
+                    <Button
+                      className={classnames(
+                        styles.noticeActionBtn,
+                        notice.handled && styles.noticeActionBtnDone
+                      )}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleGoAction(notice);
+                      }}
+                    >
+                      {notice.handled ? '查看处理结果' : (notice.actionLabel || '去处理')}
+                    </Button>
+                  </View>
+                )}
+              </View>
             </View>
           ))}
         </View>
@@ -324,7 +438,11 @@ const ProgressPage: React.FC = () => {
         </View>
         <View className={styles.reminderGrid}>
           {reminders.map(item => (
-            <View key={item.id} className={styles.reminderCard}>
+            <View
+              key={item.id}
+              className={styles.reminderCard}
+              onClick={() => handleReminderClick(item)}
+            >
               <View className={classnames(styles.reminderIcon, getReminderTypeClass(item.type))}>
                 {item.icon}
               </View>
@@ -349,7 +467,7 @@ const ProgressPage: React.FC = () => {
           <View className={styles.exportContent}>
             <Text className={styles.exportTitle}>个人材料打包</Text>
             <Text className={styles.exportDesc}>
-              一键导出整理好的材料包，方便备份和打印
+              一键导出整理好的材料包，含预检报告、完成度统计，方便备份和打印
             </Text>
           </View>
           <Button className={styles.exportBtn} onClick={handleExportChoice}>

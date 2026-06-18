@@ -71,6 +71,11 @@ export interface NoticeItem {
   type: 'info' | 'warning' | 'success';
   date: string;
   read: boolean;
+  relatedMaterialId?: string;
+  relatedCategoryId?: string;
+  relatedTab?: 'material-check' | 'photo-organize' | 'submit-list';
+  actionLabel?: string;
+  handled?: boolean;
 }
 
 export type RecognitionType = '幼儿园' | '小学' | '初级中学' | '高级中学' | '中等职业学校';
