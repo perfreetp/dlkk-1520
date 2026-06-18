@@ -1,0 +1,334 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding: $spacing-lg $page-padding 120rpx;
+}
+
+.progressCard {
+  background: linear-gradient(135deg, $color-primary-light, $color-primary);
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-lg;
+  color: $color-text-white;
+  box-shadow: 0 4rpx 16rpx rgba(37, 99, 235, 0.2);
+}
+
+.progressTitle {
+  font-size: $font-size-md;
+  opacity: 0.9;
+  margin-bottom: $spacing-md;
+}
+
+.progressStats {
+  display: flex;
+  align-items: baseline;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+}
+
+.progressNumber {
+  font-size: 56rpx;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+}
+
+.progressTotal {
+  font-size: $font-size-md;
+  opacity: 0.8;
+}
+
+.progressTip {
+  font-size: $font-size-sm;
+  opacity: 0.85;
+  line-height: 1.5;
+}
+
+.progressBarBg {
+  height: 12rpx;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: $radius-round;
+  margin-top: $spacing-md;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  background: $color-text-white;
+  border-radius: $radius-round;
+  transition: width $transition-base ease;
+}
+
+.warningCard {
+  background: $color-warning-bg;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  gap: $spacing-md;
+  align-items: flex-start;
+}
+
+.warningIcon {
+  font-size: 36rpx;
+  flex-shrink: 0;
+}
+
+.warningContent {
+  flex: 1;
+}
+
+.warningTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.warningDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+}
+
+.categoryCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+}
+
+.categoryHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg $spacing-xl;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.categoryLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.categoryIcon {
+  font-size: 36rpx;
+}
+
+.categoryName {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.categoryRight {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.categoryCount {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.categoryChevron {
+  font-size: 24rpx;
+  color: $color-text-tertiary;
+  transition: transform $transition-fast;
+}
+
+.categoryChevronExpanded {
+  transform: rotate(90deg);
+}
+
+.categoryBody {
+  border-top: 1rpx solid $color-divider;
+  padding: 0 $spacing-xl;
+}
+
+.materialItem {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  padding: $spacing-lg 0;
+  border-bottom: 1rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.checkbox {
+  flex-shrink: 0;
+  width: 44rpx;
+  height: 44rpx;
+  border: 3rpx solid $color-border;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rpx;
+  transition: all $transition-fast;
+}
+
+.checkboxChecked {
+  background: $color-success;
+  border-color: $color-success;
+}
+
+.checkIcon {
+  color: $color-text-white;
+  font-size: 26rpx;
+  font-weight: $font-weight-bold;
+}
+
+.materialInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.materialName {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.materialNameText {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  line-height: 1.5;
+}
+
+.materialChecked .materialNameText {
+  color: $color-text-tertiary;
+  text-decoration: line-through;
+}
+
+.tag {
+  flex-shrink: 0;
+  padding: 2rpx 12rpx;
+  font-size: $font-size-xs;
+  border-radius: $radius-xs;
+  font-weight: $font-weight-medium;
+}
+
+.tagRequired {
+  color: $color-error;
+  background: $color-error-bg;
+}
+
+.tagExpiry {
+  color: $color-warning;
+  background: $color-warning-bg;
+}
+
+.tagPhoto {
+  color: $color-primary;
+  background: $color-primary-bg;
+}
+
+.materialDesc {
+  display: block;
+  margin-top: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.5;
+}
+
+.materialTips {
+  display: block;
+  margin-top: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  line-height: 1.5;
+}
+
+.tipsSection {
+  margin-top: $spacing-xl;
+}
+
+.tipsCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.tipsCardTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.tipsCardIcon {
+  font-size: 32rpx;
+}
+
+.tipsList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.tipItem {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+}
+
+.tipDot {
+  flex-shrink: 0;
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: $color-primary;
+  margin-top: 16rpx;
+}
+
+.photoSpecGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  margin-top: $spacing-md;
+}
+
+.specItem {
+  flex: 1;
+  min-width: 45%;
+  padding: $spacing-md;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+}
+
+.specLabel {
+  display: block;
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-bottom: $spacing-xs;
+}
+
+.specValue {
+  display: block;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}

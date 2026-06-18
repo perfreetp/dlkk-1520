@@ -1,0 +1,391 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding: $spacing-lg $page-padding 120rpx;
+}
+
+.progressOverview {
+  background: linear-gradient(135deg, $color-primary-light, $color-primary);
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-lg;
+  color: $color-text-white;
+  box-shadow: 0 4rpx 16rpx rgba(37, 99, 235, 0.2);
+}
+
+.overviewTitle {
+  font-size: $font-size-md;
+  opacity: 0.9;
+  margin-bottom: $spacing-md;
+}
+
+.overviewStage {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  margin-bottom: $spacing-sm;
+}
+
+.overviewDesc {
+  font-size: $font-size-sm;
+  opacity: 0.85;
+  line-height: 1.5;
+}
+
+.section {
+  margin-bottom: $spacing-xl;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.sectionTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.sectionIcon {
+  font-size: 32rpx;
+}
+
+.sectionAction {
+  font-size: $font-size-sm;
+  color: $color-primary;
+}
+
+.timeline {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  box-shadow: $shadow-card;
+}
+
+.timelineItem {
+  display: flex;
+  gap: $spacing-md;
+  position: relative;
+  padding-bottom: $spacing-xl;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 20rpx;
+    top: 48rpx;
+    bottom: 0;
+    width: 2rpx;
+    background: $color-border;
+  }
+}
+
+.timelineItemCompleted:not(:last-child)::after {
+  background: $color-success;
+}
+
+.timelineDot {
+  flex-shrink: 0;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20rpx;
+  z-index: 1;
+  margin-top: 4rpx;
+}
+
+.dotCompleted {
+  background: $color-success;
+  color: $color-text-white;
+}
+
+.dotCurrent {
+  background: $color-primary;
+  color: $color-text-white;
+  box-shadow: 0 0 0 8rpx rgba(37, 99, 235, 0.15);
+}
+
+.dotPending {
+  background: $color-bg-hover;
+  color: $color-text-tertiary;
+  border: 2rpx solid $color-border;
+}
+
+.timelineContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.timelineTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  line-height: 1.5;
+}
+
+.timelineItemCompleted .timelineTitle {
+  color: $color-text-secondary;
+}
+
+.timelineItemCurrent .timelineTitle {
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.timelineDesc {
+  display: block;
+  margin-top: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  line-height: 1.5;
+}
+
+.timelineDate {
+  display: block;
+  margin-top: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.noticeList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.noticeCard {
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  position: relative;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:active {
+    transform: scale(0.99);
+  }
+}
+
+.noticeUnread {
+  background: $color-primary-bg;
+}
+
+.noticeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-sm;
+}
+
+.noticeTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  flex: 1;
+  @include text-ellipsis;
+}
+
+.noticeUnreadDot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: $color-error;
+  flex-shrink: 0;
+  margin-left: $spacing-sm;
+}
+
+.noticeType {
+  font-size: $font-size-xs;
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+  margin-right: $spacing-sm;
+  font-weight: $font-weight-medium;
+  flex-shrink: 0;
+}
+
+.typeInfo {
+  background: $color-primary-bg;
+  color: $color-primary;
+}
+
+.typeWarning {
+  background: $color-warning-bg;
+  color: $color-warning;
+}
+
+.typeSuccess {
+  background: $color-success-bg;
+  color: $color-success;
+}
+
+.noticeContent {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  @include text-ellipsis-multi(2);
+}
+
+.noticeDate {
+  display: block;
+  margin-top: $spacing-sm;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.reminderGrid {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.reminderCard {
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+  gap: $spacing-md;
+  align-items: center;
+}
+
+.reminderIcon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  flex-shrink: 0;
+}
+
+.reminderWarning {
+  background: $color-warning-bg;
+}
+
+.reminderInfo {
+  background: $color-primary-bg;
+}
+
+.reminderSuccess {
+  background: $color-success-bg;
+}
+
+.reminderContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.reminderTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  margin-bottom: 4rpx;
+}
+
+.reminderDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.5;
+}
+
+.reminderDays {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.daysNumber {
+  display: block;
+  font-size: 36rpx;
+  font-weight: $font-weight-bold;
+  color: $color-warning;
+  line-height: 1.2;
+}
+
+.daysLabel {
+  display: block;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 2rpx;
+}
+
+.daysWarning {
+  color: $color-error;
+}
+
+.daysOk {
+  color: $color-success;
+}
+
+.exportSection {
+  margin-top: $spacing-xl;
+}
+
+.exportCard {
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  display: flex;
+  gap: $spacing-md;
+  align-items: center;
+}
+
+.exportIcon {
+  font-size: 56rpx;
+  flex-shrink: 0;
+}
+
+.exportContent {
+  flex: 1;
+}
+
+.exportTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: #065f46;
+  margin-bottom: 4rpx;
+}
+
+.exportDesc {
+  font-size: $font-size-sm;
+  color: #047857;
+  line-height: 1.5;
+}
+
+.exportBtn {
+  @include button-reset;
+  padding: $spacing-sm $spacing-lg;
+  background: $color-success;
+  color: $color-text-white;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-button;
+  flex-shrink: 0;
+  transition: all $transition-fast;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.emptyState {
+  text-align: center;
+  padding: $spacing-xl;
+  color: $color-text-tertiary;
+  font-size: $font-size-sm;
+}

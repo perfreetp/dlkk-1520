@@ -1,0 +1,373 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 120rpx;
+}
+
+.categoryTabs {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md $page-padding;
+  background: $color-bg-page;
+  white-space: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.tabItem {
+  @include button-reset;
+  flex-shrink: 0;
+  padding: $spacing-sm $spacing-lg;
+  background: $color-bg-card;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  transition: all $transition-fast;
+  border: 2rpx solid transparent;
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.tabItemActive {
+  background: $color-primary;
+  color: $color-text-white;
+  border-color: $color-primary;
+}
+
+.content {
+  padding: 0 $page-padding;
+}
+
+.guideCard {
+  background: linear-gradient(135deg, #dbeafe, $color-primary-bg);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  gap: $spacing-md;
+  align-items: flex-start;
+}
+
+.guideIcon {
+  font-size: 40rpx;
+  flex-shrink: 0;
+}
+
+.guideContent {
+  flex: 1;
+}
+
+.guideTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-primary-dark;
+  margin-bottom: $spacing-xs;
+}
+
+.guideTips {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+
+  li {
+    margin-bottom: 4rpx;
+  }
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.sectionTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.sectionCount {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.photoGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+}
+
+.photoCard {
+  width: calc(50% - 12rpx);
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+  transition: all $transition-fast;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.photoThumb {
+  position: relative;
+  width: 100%;
+  height: 240rpx;
+  background: $color-bg-hover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photoPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.placeholderIcon {
+  font-size: 64rpx;
+  opacity: 0.5;
+}
+
+.placeholderText {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.statusBadge {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  padding: 4rpx 12rpx;
+  font-size: $font-size-xs;
+  border-radius: $radius-xs;
+  font-weight: $font-weight-medium;
+}
+
+.statusDone {
+  background: $color-success;
+  color: $color-text-white;
+}
+
+.statusPending {
+  background: rgba(255, 255, 255, 0.9);
+  color: $color-text-secondary;
+}
+
+.photoInfo {
+  padding: $spacing-md;
+}
+
+.photoName {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  margin-bottom: 4rpx;
+  @include text-ellipsis;
+}
+
+.photoDesc {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  @include text-ellipsis;
+}
+
+.photoActions {
+  display: flex;
+  border-top: 1rpx solid $color-divider;
+}
+
+.actionBtn {
+  @include button-reset;
+  flex: 1;
+  height: 64rpx;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  background: transparent;
+  transition: background $transition-fast;
+
+  &:active {
+    background: $color-bg-hover;
+  }
+
+  & + & {
+    border-left: 1rpx solid $color-divider;
+  }
+}
+
+.actionBtnPrimary {
+  color: $color-primary;
+}
+
+.statsCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-lg;
+}
+
+.statsTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.statsGrid {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.statItem {
+  flex: 1;
+  text-align: center;
+  padding: $spacing-md;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+}
+
+.statNumber {
+  display: block;
+  font-size: 40rpx;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  line-height: 1.2;
+}
+
+.statLabel {
+  display: block;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  margin-top: $spacing-xs;
+}
+
+.tipCard {
+  background: $color-warning-bg;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  gap: $spacing-sm;
+  align-items: flex-start;
+}
+
+.tipIcon {
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+
+.tipText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.cropGuideModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl;
+}
+
+.cropGuideTitle {
+  font-size: $font-size-lg;
+  color: $color-text-white;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $spacing-xl;
+}
+
+.cropGuideFrame {
+  width: 500rpx;
+  height: 700rpx;
+  border: 4rpx dashed $color-text-white;
+  border-radius: $radius-md;
+  position: relative;
+  margin-bottom: $spacing-xl;
+}
+
+.cropGuideCorner {
+  position: absolute;
+  width: 40rpx;
+  height: 40rpx;
+  border-color: $color-success;
+  border-style: solid;
+  border-width: 0;
+
+  &.topLeft {
+    top: -4rpx;
+    left: -4rpx;
+    border-top-width: 6rpx;
+    border-left-width: 6rpx;
+  }
+
+  &.topRight {
+    top: -4rpx;
+    right: -4rpx;
+    border-top-width: 6rpx;
+    border-right-width: 6rpx;
+  }
+
+  &.bottomLeft {
+    bottom: -4rpx;
+    left: -4rpx;
+    border-bottom-width: 6rpx;
+    border-left-width: 6rpx;
+  }
+
+  &.bottomRight {
+    bottom: -4rpx;
+    right: -4rpx;
+    border-bottom-width: 6rpx;
+    border-right-width: 6rpx;
+  }
+}
+
+.cropGuideTips {
+  text-align: center;
+  color: $color-text-white;
+  font-size: $font-size-sm;
+  line-height: 1.8;
+  opacity: 0.9;
+}
+
+.cropGuideClose {
+  @include button-reset;
+  margin-top: $spacing-xl;
+  padding: $spacing-md $spacing-xl;
+  background: $color-bg-card;
+  color: $color-text-primary;
+  font-size: $font-size-md;
+  border-radius: $radius-button;
+}

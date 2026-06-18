@@ -1,0 +1,104 @@
+@use '@/styles/variables.scss' as *;
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  padding: $spacing-lg 0;
+  border-bottom: 1rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.clickable {
+  cursor: pointer;
+  transition: opacity $transition-fast;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.checked {
+  .title {
+    color: $color-text-tertiary;
+    text-decoration: line-through;
+  }
+}
+
+.warning {
+  .checkbox {
+    border-color: $color-warning;
+  }
+}
+
+.checkbox {
+  flex-shrink: 0;
+  width: 40rpx;
+  height: 40rpx;
+  border: 3rpx solid $color-border;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4rpx;
+  transition: all $transition-fast;
+}
+
+.checkboxChecked {
+  background: $color-success;
+  border-color: $color-success;
+}
+
+.checkIcon {
+  color: $color-text-white;
+  font-size: 24rpx;
+  font-weight: $font-weight-bold;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  line-height: 1.5;
+}
+
+.requiredTag {
+  flex-shrink: 0;
+  padding: 2rpx 12rpx;
+  font-size: $font-size-xs;
+  color: $color-error;
+  background: $color-error-bg;
+  border-radius: $radius-xs;
+}
+
+.warningTag {
+  flex-shrink: 0;
+  padding: 2rpx 12rpx;
+  font-size: $font-size-xs;
+  color: $color-warning;
+  background: $color-warning-bg;
+  border-radius: $radius-xs;
+}
+
+.description {
+  display: block;
+  margin-top: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.5;
+}

@@ -1,0 +1,469 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, $color-primary-bg 0%, $color-bg-page 300rpx);
+  padding: $spacing-lg $page-padding 120rpx;
+}
+
+.header {
+  margin-bottom: $spacing-xl;
+}
+
+.title {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  line-height: 1.3;
+}
+
+.subtitle {
+  display: block;
+  margin-top: $spacing-sm;
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  line-height: 1.6;
+}
+
+.selectorCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.selectorRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.selectorLabel {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.selectorValue {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $font-size-md;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+}
+
+.chevron {
+  font-size: 24rpx;
+  color: $color-text-tertiary;
+}
+
+.startBtn {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-primary-light, $color-primary);
+  color: $color-text-white;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-button;
+  margin-top: $spacing-lg;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.quizCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-lg;
+}
+
+.progressInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+}
+
+.progressText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.questionIndex {
+  font-size: $font-size-md;
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.questionTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  line-height: 1.5;
+  margin-bottom: $spacing-xl;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.optionItem {
+  @include button-reset;
+  width: 100%;
+  padding: $spacing-lg $spacing-xl;
+  background: $color-bg-page;
+  border: 2rpx solid transparent;
+  border-radius: $radius-md;
+  text-align: left;
+  transition: all $transition-fast;
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.optionSelected {
+  background: $color-primary-bg;
+  border-color: $color-primary;
+}
+
+.optionLabel {
+  display: block;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  line-height: 1.5;
+}
+
+.optionHint {
+  display: block;
+  margin-top: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  line-height: 1.5;
+}
+
+.optionSelected .optionLabel {
+  color: $color-primary;
+}
+
+.navButtons {
+  display: flex;
+  gap: $spacing-md;
+  margin-top: $spacing-xl;
+}
+
+.navBtn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-md;
+  border-radius: $radius-button;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  transition: all $transition-fast;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.prevBtn {
+  background: $color-bg-hover;
+  color: $color-text-secondary;
+}
+
+.nextBtn {
+  background: $color-primary;
+  color: $color-text-white;
+}
+
+.nextBtnDisabled {
+  background: $color-text-disabled;
+  color: $color-text-white;
+}
+
+.resultCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-lg;
+}
+
+.resultHeader {
+  text-align: center;
+  padding: $spacing-lg 0 $spacing-xl;
+}
+
+.scoreRing {
+  width: 200rpx;
+  height: 200rpx;
+  margin: 0 auto $spacing-lg;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: conic-gradient($color-success var(--progress, 0%), $color-bg-hover 0);
+}
+
+.scoreRing::before {
+  content: '';
+  position: absolute;
+  width: 160rpx;
+  height: 160rpx;
+  background: $color-bg-card;
+  border-radius: 50%;
+}
+
+.scoreValue {
+  position: relative;
+  z-index: 1;
+  font-size: 48rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.scoreLabel {
+  font-size: $font-size-lg;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.scoreDesc {
+  display: block;
+  margin-top: $spacing-sm;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.resultSection {
+  margin-top: $spacing-xl;
+  padding-top: $spacing-xl;
+  border-top: 1rpx solid $color-divider;
+}
+
+.resultSectionTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.warningList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.warningItem {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: $color-warning-bg;
+  border-radius: $radius-sm;
+}
+
+.warningIcon {
+  color: $color-warning;
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+
+.warningText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.suggestionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: $color-primary-bg;
+  border-radius: $radius-sm;
+  margin-bottom: $spacing-sm;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.suggestionIcon {
+  color: $color-primary;
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+
+.suggestionText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.restartBtn {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-lg;
+  background: $color-bg-card;
+  color: $color-primary;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  border: 2rpx solid $color-primary;
+  border-radius: $radius-button;
+  margin-top: $spacing-md;
+  transition: all $transition-fast;
+
+  &:active {
+    background: $color-primary-bg;
+  }
+}
+
+.policyCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  box-shadow: $shadow-card;
+  margin-top: $spacing-lg;
+}
+
+.policyTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.policyList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.policyItem {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+}
+
+.policyDot {
+  flex-shrink: 0;
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: $color-primary;
+  margin-top: 14rpx;
+}
+
+.typeSelectorModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.modalContent {
+  width: 100%;
+  max-height: 80vh;
+  background: $color-bg-card;
+  border-radius: $radius-xl $radius-xl 0 0;
+  padding: $spacing-xl $page-padding;
+  overflow-y: auto;
+}
+
+.modalTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  text-align: center;
+  margin-bottom: $spacing-xl;
+}
+
+.typeList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.typeItem {
+  @include button-reset;
+  width: 100%;
+  padding: $spacing-lg;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  text-align: left;
+  border: 2rpx solid transparent;
+  transition: all $transition-fast;
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.typeItemActive {
+  background: $color-primary-bg;
+  border-color: $color-primary;
+}
+
+.typeName {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.typeDesc {
+  display: block;
+  margin-top: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.modalCloseBtn {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-md;
+  background: $color-primary;
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-button;
+  margin-top: $spacing-xl;
+  transition: all $transition-fast;
+
+  &:active {
+    opacity: 0.9;
+  }
+}

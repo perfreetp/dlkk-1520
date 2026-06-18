@@ -1,0 +1,352 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding: $spacing-lg $page-padding 160rpx;
+}
+
+.statusCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+}
+
+.statusIcon {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: $color-success-bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  flex-shrink: 0;
+}
+
+.statusWarning {
+  background: $color-warning-bg;
+}
+
+.statusContent {
+  flex: 1;
+}
+
+.statusTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.statusDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.5;
+}
+
+.orderList {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-lg;
+  overflow: hidden;
+}
+
+.orderListHeader {
+  padding: $spacing-lg $spacing-xl;
+  border-bottom: 1rpx solid $color-divider;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.orderListTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.orderListCount {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.orderItem {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  padding: $spacing-lg $spacing-xl;
+  border-bottom: 1rpx solid $color-divider;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.orderNumber {
+  flex-shrink: 0;
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: $color-primary-bg;
+  color: $color-primary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rpx;
+}
+
+.orderItemChecked .orderNumber {
+  background: $color-success;
+  color: $color-text-white;
+}
+
+.orderInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.orderName {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  line-height: 1.5;
+  margin-bottom: 4rpx;
+}
+
+.orderItemChecked .orderName {
+  color: $color-text-tertiary;
+  text-decoration: line-through;
+}
+
+.orderDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.5;
+}
+
+.orderCheck {
+  flex-shrink: 0;
+  width: 44rpx;
+  height: 44rpx;
+  border: 3rpx solid $color-border;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rpx;
+  transition: all $transition-fast;
+}
+
+.orderItemChecked .orderCheck {
+  background: $color-success;
+  border-color: $color-success;
+}
+
+.checkIcon {
+  color: $color-text-white;
+  font-size: 24rpx;
+  font-weight: $font-weight-bold;
+}
+
+.collapseCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+  overflow: hidden;
+}
+
+.collapseHeader {
+  padding: $spacing-lg $spacing-xl;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.collapseTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.collapseIcon {
+  font-size: 32rpx;
+}
+
+.collapseChevron {
+  font-size: 28rpx;
+  color: $color-text-tertiary;
+  transition: transform $transition-fast;
+}
+
+.collapseChevronExpanded {
+  transform: rotate(180deg);
+}
+
+.collapseBody {
+  padding: 0 $spacing-xl $spacing-xl;
+  border-top: 1rpx solid $color-divider;
+  padding-top: $spacing-lg;
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.infoItem {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+}
+
+.infoDot {
+  flex-shrink: 0;
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: $color-primary;
+  margin-top: 16rpx;
+}
+
+.infoText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.7;
+  flex: 1;
+}
+
+.highlightBox {
+  background: $color-warning-bg;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-top: $spacing-md;
+  display: flex;
+  gap: $spacing-sm;
+  align-items: flex-start;
+}
+
+.highlightIcon {
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+
+.highlightText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+  display: flex;
+  gap: $spacing-md;
+}
+
+.primaryBtn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-primary-light, $color-primary);
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-button;
+  transition: all $transition-fast;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.secondaryBtn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-lg;
+  background: $color-bg-card;
+  color: $color-primary;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  border: 2rpx solid $color-primary;
+  border-radius: $radius-button;
+  transition: all $transition-fast;
+
+  &:active {
+    background: $color-primary-bg;
+  }
+}
+
+.agentRequirement {
+  padding: $spacing-md;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-sm;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.agentReqTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.agentReqDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.5;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4rpx 12rpx;
+  font-size: $font-size-xs;
+  border-radius: $radius-xs;
+  font-weight: $font-weight-medium;
+  margin-left: $spacing-xs;
+}
+
+.badgeWarning {
+  background: $color-warning-bg;
+  color: $color-warning;
+}

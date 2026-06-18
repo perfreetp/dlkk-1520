@@ -1,0 +1,52 @@
+@use '@/styles/variables.scss' as *;
+
+.progressWrap {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.track {
+  flex: 1;
+  background: $color-bg-hover;
+  border-radius: $radius-round;
+  overflow: hidden;
+}
+
+.track-sm {
+  height: 8rpx;
+}
+
+.track-md {
+  height: 12rpx;
+}
+
+.track-lg {
+  height: 16rpx;
+}
+
+.bar {
+  height: 100%;
+  border-radius: $radius-round;
+  transition: width $transition-base ease;
+}
+
+.bar-primary {
+  background: linear-gradient(90deg, $color-primary-light, $color-primary);
+}
+
+.bar-success {
+  background: linear-gradient(90deg, #34d399, $color-success);
+}
+
+.bar-warning {
+  background: linear-gradient(90deg, #fbbf24, $color-warning);
+}
+
+.percentText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+  min-width: 80rpx;
+  text-align: right;
+}

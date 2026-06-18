@@ -1,0 +1,30 @@
+@use '@/styles/variables.scss' as *;
+
+.sectionTitle {
+  margin-bottom: $spacing-lg;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.icon {
+  font-size: 32rpx;
+}
+
+.title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  line-height: 1.4;
+}
+
+.subtitle {
+  display: block;
+  margin-top: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.5;
+}
