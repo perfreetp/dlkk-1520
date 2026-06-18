@@ -4,11 +4,22 @@ import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
 import classnames from 'classnames';
 import { materialCategories, agentInstructions } from '@/data/materials';
+import { useAppStore } from '@/store/AppContext';
+import { generateExportText, saveExportToClipboard } from '@/utils/export';
 
 const SubmitListPage: React.FC = () => {
-  const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
+  const {
+    submitChecked,
+    toggleSubmitChecked,
+    materialChecked,
+    photos,
+    applicantInfo
+  } = useAppStore();
+
   const [expandedBooking, setExpandedBooking] = useState(true);
   const [expandedAgent, setExpandedAgent] = useState(false);
+  const [showExportResult, setShowExportResult] = useState(false);
+  const [exportText, setExportText] = useState('');
 
   const submitOrder = useMemo(() => {
     const order = [
@@ -40,33 +51,49 @@ const SubmitListPage: React.FC = () => {
     return submitOrder.reduce((sum, group) => sum + group.items.length, 0);
   }, [submitOrder]);
 
-  const checkedCount = checkedItems.size;
+  const checkedCount = submitChecked.filter(id =>
+    submitOrder.some(g => g.items.some((i: any) => i.id === id))
+  ).length;
+
   const allChecked = checkedCount === totalCount;
 
   const toggleItem = (itemId: string) => {
-    setCheckedItems(prev => {
-      const next = new Set(prev);
-      if (next.has(itemId)) {
-        next.delete(itemId);
-      } else {
-        next.add(itemId);
-      }
-      return next;
-    });
+    toggleSubmitChecked(itemId);
   };
 
-  const handleExport = () => {
-    Taro.showLoading({ title: '生成中...' });
-    setTimeout(() => {
-      Taro.hideLoading();
-      Taro.showModal({
-        title: '清单已生成',
-        content: `共 ${totalCount} 项材料，已确认 ${checkedCount} 项。\n\n可将清单截图保存，办理时对照核对。`,
-        showCancel: false,
-        confirmText: '好的'
+  const handleExport = async () => {
+    const text = generateExportText(
+      {
+        materialChecked,
+        submitChecked,
+        photos,
+        applicantInfo: applicantInfo.name ? applicantInfo : undefined
+      },
+      '教师资格认定 - 提交清单'
+    );
+
+    setExportText(text);
+    setShowExportResult(true);
+
+    const success = await saveExportToClipboard(text);
+    if (success) {
+      Taro.showToast({
+        title: '已复制到剪贴板',
+        icon: 'success'
       });
-    }, 1000);
-    console.log('[SubmitList] export list, checked:', checkedCount, 'total:', totalCount);
+    }
+
+    console.log('[SubmitList] export generated, length:', text.length);
+  };
+
+  const handleCopyAgain = async () => {
+    const success = await saveExportToClipboard(exportText);
+    if (success) {
+      Taro.showToast({
+        title: '已复制',
+        icon: 'success'
+      });
+    }
   };
 
   const handleBooking = () => {
@@ -114,24 +141,27 @@ const SubmitListPage: React.FC = () => {
                 key={item.id}
                 className={classnames(
                   styles.orderItem,
-                  checkedItems.has(item.id) && styles.orderItemChecked
+                  submitChecked.includes(item.id) && styles.orderItemChecked
                 )}
                 onClick={() => toggleItem(item.id)}
               >
                 <View className={styles.orderNumber}>
-                  {checkedItems.has(item.id) ? '✓' : item.orderNum}
+                  {submitChecked.includes(item.id) ? '✓' : item.orderNum}
                 </View>
                 <View className={styles.orderInfo}>
                   <Text className={styles.orderName}>{item.name}</Text>
                   <Text className={styles.orderDesc}>{item.description}</Text>
+                  {photos.some(p => p.materialId === item.id) && (
+                    <Text className={styles.orderPhotoTag}>📷 已有照片</Text>
+                  )}
                 </View>
                 <View
                   className={classnames(
                     styles.orderCheck,
-                    checkedItems.has(item.id) && styles.orderItemChecked
+                    submitChecked.includes(item.id) && styles.orderItemChecked
                   )}
                 >
-                  {checkedItems.has(item.id) && (
+                  {submitChecked.includes(item.id) && (
                     <Text className={styles.checkIcon}>✓</Text>
                   )}
                 </View>
@@ -246,6 +276,30 @@ const SubmitListPage: React.FC = () => {
           生成提交清单
         </Button>
       </View>
+
+      {showExportResult && (
+        <View className={styles.exportModal} onClick={() => setShowExportResult(false)}>
+          <View className={styles.exportModalContent} onClick={e => e.stopPropagation()}>
+            <View className={styles.exportModalHeader}>
+              <Text className={styles.exportModalTitle}>提交清单已生成</Text>
+              <Text className={styles.exportModalClose} onClick={() => setShowExportResult(false)}>
+                ✕
+              </Text>
+            </View>
+            <ScrollView scrollY className={styles.exportModalBody}>
+              <Text className={styles.exportText}>{exportText}</Text>
+            </ScrollView>
+            <View className={styles.exportModalActions}>
+              <Button className={styles.exportModalBtnSecondary} onClick={() => setShowExportResult(false)}>
+                关闭
+              </Button>
+              <Button className={styles.exportModalBtnPrimary} onClick={handleCopyAgain}>
+                复制内容
+              </Button>
+            </View>
+          </View>
+        </View>
+      )}
     </ScrollView>
   );
 };

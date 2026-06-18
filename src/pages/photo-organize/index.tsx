@@ -1,15 +1,29 @@
-import React, { useState, useMemo } from 'react';
-import { View, Text, Button, Image, ScrollView } from '@tarojs/components';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { View, Text, Button, Image, ScrollView, MovableArea, MovableView, Canvas } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
 import classnames from 'classnames';
 import { materialCategories } from '@/data/materials';
 import type { PhotoItem } from '@/types';
+import { useAppStore } from '@/store/AppContext';
+
+interface CropInfo {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
 
 const PhotoOrganizePage: React.FC = () => {
+  const { photos, addOrUpdatePhoto, removePhoto } = useAppStore();
+
   const [activeCategory, setActiveCategory] = useState(materialCategories[0].id);
-  const [photos, setPhotos] = useState<PhotoItem[]>([]);
   const [showCropGuide, setShowCropGuide] = useState(false);
+  const [showCropper, setShowCropper] = useState(false);
+  const [currentMaterial, setCurrentMaterial] = useState<{ id: string; name: string } | null>(null);
+  const [tempPhotoUrl, setTempPhotoUrl] = useState('');
+  const [cropInfo, setCropInfo] = useState<CropInfo>({ left: 10, top: 10, width: 80, height: 80 });
+  const [isDraggingCorner, setIsDraggingCorner] = useState<string | null>(null);
 
   const currentCategory = materialCategories.find(c => c.id === activeCategory);
   const currentItems = currentCategory?.items || [];
@@ -33,31 +47,16 @@ const PhotoOrganizePage: React.FC = () => {
     try {
       const res = await Taro.chooseImage({
         count: 1,
-        sizeType: ['compressed'],
+        sizeType: ['original'],
         sourceType: ['camera', 'album'],
       });
 
       if (res.tempFilePaths && res.tempFilePaths.length > 0) {
-        const newPhoto: PhotoItem = {
-          id: `photo_${Date.now()}`,
-          materialId: itemId,
-          name: itemName,
-          url: res.tempFilePaths[0],
-          uploadedAt: new Date().toISOString(),
-          status: 'pending'
-        };
-
-        setPhotos(prev => {
-          const filtered = prev.filter(p => p.materialId !== itemId);
-          return [...filtered, newPhoto];
-        });
-
-        Taro.showToast({
-          title: '上传成功',
-          icon: 'success'
-        });
-
-        console.log('[PhotoOrganize] photo uploaded:', itemName);
+        setCurrentMaterial({ id: itemId, name: itemName });
+        setTempPhotoUrl(res.tempFilePaths[0]);
+        setCropInfo({ left: 10, top: 10, width: 80, height: 80 });
+        setShowCropper(true);
+        console.log('[PhotoOrganize] photo selected, opening cropper');
       }
     } catch (error) {
       console.error('[PhotoOrganize] take photo error:', error);
@@ -68,11 +67,78 @@ const PhotoOrganizePage: React.FC = () => {
     }
   };
 
-  const handlePreviewPhoto = (url: string) => {
-    Taro.previewImage({
-      urls: [url],
-      current: url
+  const handleCropConfirm = () => {
+    if (!currentMaterial) return;
+
+    const newPhoto: PhotoItem = {
+      id: `photo_${Date.now()}`,
+      materialId: currentMaterial.id,
+      name: currentMaterial.name,
+      url: tempPhotoUrl,
+      originalUrl: tempPhotoUrl,
+      uploadedAt: new Date().toISOString(),
+      status: 'pending',
+      cropInfo: {
+        left: cropInfo.left,
+        top: cropInfo.top,
+        width: cropInfo.width,
+        height: cropInfo.height
+      }
+    };
+
+    addOrUpdatePhoto(newPhoto);
+    setShowCropper(false);
+    setTempPhotoUrl('');
+    setCurrentMaterial(null);
+
+    Taro.showToast({
+      title: '保存成功',
+      icon: 'success'
     });
+
+    console.log('[PhotoOrganize] photo cropped and saved:', currentMaterial.name);
+  };
+
+  const handleCropCancel = () => {
+    Taro.showModal({
+      title: '确认取消',
+      content: '取消后本次裁剪不会保存，确定吗？',
+      success: (res) => {
+        if (res.confirm) {
+          setShowCropper(false);
+          setTempPhotoUrl('');
+          setCurrentMaterial(null);
+        }
+      }
+    });
+  };
+
+  const handleCropReset = () => {
+    setCropInfo({ left: 10, top: 10, width: 80, height: 80 });
+  };
+
+  const handlePreviewPhoto = (photo: PhotoItem) => {
+    if (photo.cropInfo) {
+      Taro.showModal({
+        title: photo.name,
+        content: `已裁剪保存\n裁剪区域：左 ${photo.cropInfo.left}%  上 ${photo.cropInfo.top}%\n尺寸：${photo.cropInfo.width}% × ${photo.cropInfo.height}%`,
+        confirmText: '查看原图',
+        cancelText: '关闭',
+        success: (res) => {
+          if (res.confirm && photo.originalUrl) {
+            Taro.previewImage({
+              urls: [photo.originalUrl],
+              current: photo.originalUrl
+            });
+          }
+        }
+      });
+    } else {
+      Taro.previewImage({
+        urls: [photo.url],
+        current: photo.url
+      });
+    }
   };
 
   const handleDeletePhoto = (itemId: string) => {
@@ -81,13 +147,54 @@ const PhotoOrganizePage: React.FC = () => {
       content: '确定要删除这张照片吗？',
       success: (res) => {
         if (res.confirm) {
-          setPhotos(prev => prev.filter(p => p.materialId !== itemId));
+          removePhoto(itemId);
           Taro.showToast({
             title: '已删除',
             icon: 'success'
           });
         }
       }
+    });
+  };
+
+  const handleEditCrop = (itemId: string, itemName: string) => {
+    const photo = getItemPhoto(itemId);
+    if (!photo) return;
+    setCurrentMaterial({ id: itemId, name: itemName });
+    setTempPhotoUrl(photo.originalUrl || photo.url);
+    setCropInfo(photo.cropInfo || { left: 10, top: 10, width: 80, height: 80 });
+    setShowCropper(true);
+  };
+
+  const handleCornerMove = (corner: string, direction: { x: number; y: number }) => {
+    setCropInfo(prev => {
+      let { left, top, width, height } = prev;
+      const step = 2;
+
+      switch (corner) {
+        case 'topLeft':
+          left = Math.max(0, Math.min(left + direction.x * step, left + width - 20));
+          top = Math.max(0, Math.min(top + direction.y * step, top + height - 20));
+          width = Math.max(20, prev.left + prev.width - left);
+          height = Math.max(20, prev.top + prev.height - top);
+          break;
+        case 'topRight':
+          top = Math.max(0, Math.min(top + direction.y * step, top + height - 20));
+          width = Math.max(20, Math.min(100 - left, width + direction.x * step));
+          height = Math.max(20, prev.top + prev.height - top);
+          break;
+        case 'bottomLeft':
+          left = Math.max(0, Math.min(left + direction.x * step, left + width - 20));
+          width = Math.max(20, prev.left + prev.width - left);
+          height = Math.max(20, Math.min(100 - top, height + direction.y * step));
+          break;
+        case 'bottomRight':
+          width = Math.max(20, Math.min(100 - left, width + direction.x * step));
+          height = Math.max(20, Math.min(100 - top, height + direction.y * step));
+          break;
+      }
+
+      return { left, top, width, height };
     });
   };
 
@@ -99,6 +206,40 @@ const PhotoOrganizePage: React.FC = () => {
     });
     return map;
   }, [photos]);
+
+  const renderCroppedImage = (photo: PhotoItem, className?: string) => {
+    if (!photo.cropInfo) {
+      return (
+        <Image
+          className={className || ''}
+          src={photo.url}
+          mode="aspectFill"
+        />
+      );
+    }
+
+    const { left, top, width, height } = photo.cropInfo;
+    const scaleX = 100 / width;
+    const scaleY = 100 / height;
+    const translateX = -left * scaleX;
+    const translateY = -top * scaleY;
+
+    return (
+      <View className={styles.croppedImageWrap}>
+        <Image
+          className={styles.croppedImage}
+          src={photo.originalUrl || photo.url}
+          mode="aspectFill"
+          style={{
+            width: `${scaleX * 100}%`,
+            height: `${scaleY * 100}%`,
+            transform: `translate(${translateX}%, ${translateY}%)`,
+            transformOrigin: '0 0'
+          }}
+        />
+      </View>
+    );
+  };
 
   return (
     <View className={styles.page}>
@@ -143,15 +284,15 @@ const PhotoOrganizePage: React.FC = () => {
           <View className={styles.guideContent}>
             <Text className={styles.guideTitle}>拍照小技巧</Text>
             <Text className={styles.guideTips}>
-              点击查看正确的拍照方法，确保材料清晰可辨
+              点击查看正确的拍照方法，上传后可裁剪调整
             </Text>
           </View>
         </View>
 
         <View className={styles.tipCard}>
-          <Text className={styles.tipIcon}>⚠️</Text>
+          <Text className={styles.tipIcon}>✂️</Text>
           <Text className={styles.tipText}>
-            请确保照片四角完整、文字清晰，光线充足不反光。建议使用扫描类APP拍摄，效果更好。
+            上传照片后可拖动四角调整裁剪范围，确保材料边缘对齐。
           </Text>
         </View>
 
@@ -172,14 +313,9 @@ const PhotoOrganizePage: React.FC = () => {
                 <View className={styles.photoThumb}>
                   {uploaded && photo ? (
                     <>
-                      <Image
-                        className={styles.photoImage}
-                        src={photo.url}
-                        mode="aspectFill"
-                        onClick={() => handlePreviewPhoto(photo.url)}
-                      />
+                      {renderCroppedImage(photo, styles.photoImage)}
                       <View className={classnames(styles.statusBadge, styles.statusDone)}>
-                        已上传
+                        {photo.cropInfo ? '已裁剪' : '已上传'}
                       </View>
                     </>
                   ) : (
@@ -199,19 +335,19 @@ const PhotoOrganizePage: React.FC = () => {
                   <Text className={styles.photoDesc}>{item.description}</Text>
                 </View>
                 <View className={styles.photoActions}>
-                  {uploaded ? (
+                  {uploaded && photo ? (
                     <>
                       <View
                         className={styles.actionBtn}
-                        onClick={() => photo && handlePreviewPhoto(photo.url)}
+                        onClick={() => handlePreviewPhoto(photo)}
                       >
                         查看
                       </View>
                       <View
                         className={classnames(styles.actionBtn, styles.actionBtnPrimary)}
-                        onClick={() => handleTakePhoto(item.id, item.name)}
+                        onClick={() => handleEditCrop(item.id, item.name)}
                       >
-                        重拍
+                        裁剪
                       </View>
                       <View
                         className={styles.actionBtn}
@@ -250,10 +386,110 @@ const PhotoOrganizePage: React.FC = () => {
             <Text>💡 光线充足，避免反光和阴影</Text>
             <Text>📱 手机与材料保持平行</Text>
             <Text>🔍 确保文字清晰可辨认</Text>
+            <Text>✂️ 上传后可继续裁剪调整</Text>
           </View>
           <Button className={styles.cropGuideClose} onClick={() => setShowCropGuide(false)}>
             我知道了
           </Button>
+        </View>
+      )}
+
+      {showCropper && tempPhotoUrl && (
+        <View className={styles.cropperModal}>
+          <View className={styles.cropperHeader}>
+            <Text className={styles.cropperTitle}>裁剪调整</Text>
+            <Text className={styles.cropperSubtitle}>拖动四角调整裁剪范围</Text>
+          </View>
+
+          <View className={styles.cropperContainer}>
+            <View className={styles.cropperImageWrap}>
+              <Image
+                className={styles.cropperImage}
+                src={tempPhotoUrl}
+                mode="aspectFit"
+              />
+              <View
+                className={styles.cropBox}
+                style={{
+                  left: `${cropInfo.left}%`,
+                  top: `${cropInfo.top}%`,
+                  width: `${cropInfo.width}%`,
+                  height: `${cropInfo.height}%`
+                }}
+              >
+                <View
+                  className={classnames(styles.cropCorner, styles.cropCornerTL)}
+                  onClick={() => {}}
+                  onTouchStart={() => setIsDraggingCorner('topLeft')}
+                  onTouchEnd={() => setIsDraggingCorner(null)}
+                />
+                <View
+                  className={classnames(styles.cropCorner, styles.cropCornerTR)}
+                  onTouchStart={() => setIsDraggingCorner('topRight')}
+                  onTouchEnd={() => setIsDraggingCorner(null)}
+                />
+                <View
+                  className={classnames(styles.cropCorner, styles.cropCornerBL)}
+                  onTouchStart={() => setIsDraggingCorner('bottomLeft')}
+                  onTouchEnd={() => setIsDraggingCorner(null)}
+                />
+                <View
+                  className={classnames(styles.cropCorner, styles.cropCornerBR)}
+                  onTouchStart={() => setIsDraggingCorner('bottomRight')}
+                  onTouchEnd={() => setIsDraggingCorner(null)}
+                />
+                <View className={styles.cropGridH} />
+                <View className={styles.cropGridV} />
+              </View>
+            </View>
+          </View>
+
+          <View className={styles.cropControls}>
+            <View className={styles.cropControlRow}>
+              <Text className={styles.cropControlLabel}>位置微调</Text>
+            </View>
+            <View className={styles.cropPad}>
+              <View className={styles.cropPadRow}>
+                <View className={styles.cropPadBtn} onClick={() => handleCornerMove('topLeft', { x: -1, y: -1 })}>↖</View>
+                <View className={styles.cropPadBtn} onClick={() => {
+                  setCropInfo(p => ({ ...p, top: Math.max(0, p.top - 2) }));
+                }}>↑</View>
+                <View className={styles.cropPadBtn} onClick={() => handleCornerMove('topRight', { x: 1, y: -1 })}>↗</View>
+              </View>
+              <View className={styles.cropPadRow}>
+                <View className={styles.cropPadBtn} onClick={() => {
+                  setCropInfo(p => ({ ...p, left: Math.max(0, p.left - 2) }));
+                }}>←</View>
+                <View className={styles.cropPadCenter}>
+                  <Text className={styles.cropSizeText}>
+                    {Math.round(cropInfo.width)}% × {Math.round(cropInfo.height)}%
+                  </Text>
+                </View>
+                <View className={styles.cropPadBtn} onClick={() => {
+                  setCropInfo(p => ({ ...p, left: Math.min(100 - p.width, p.left + 2) }));
+                }}>→</View>
+              </View>
+              <View className={styles.cropPadRow}>
+                <View className={styles.cropPadBtn} onClick={() => handleCornerMove('bottomLeft', { x: -1, y: 1 })}>↙</View>
+                <View className={styles.cropPadBtn} onClick={() => {
+                  setCropInfo(p => ({ ...p, top: Math.min(100 - p.height, p.top + 2) }));
+                }}>↓</View>
+                <View className={styles.cropPadBtn} onClick={() => handleCornerMove('bottomRight', { x: 1, y: 1 })}>↘</View>
+              </View>
+            </View>
+          </View>
+
+          <View className={styles.cropperActions}>
+            <Button className={styles.cropperBtnSecondary} onClick={handleCropReset}>
+              重置
+            </Button>
+            <Button className={styles.cropperBtnSecondary} onClick={handleCropCancel}>
+              取消
+            </Button>
+            <Button className={styles.cropperBtnPrimary} onClick={handleCropConfirm}>
+              保存裁剪
+            </Button>
+          </View>
         </View>
       )}
     </View>

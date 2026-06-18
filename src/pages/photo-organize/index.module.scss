@@ -371,3 +371,242 @@
   font-size: $font-size-md;
   border-radius: $radius-button;
 }
+
+.croppedImageWrap {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.croppedImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.cropperModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+}
+
+.cropperHeader {
+  padding: $spacing-lg $spacing-xl;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.cropperTitle {
+  display: block;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-white;
+}
+
+.cropperSubtitle {
+  display: block;
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: $spacing-xs;
+}
+
+.cropperContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  overflow: hidden;
+}
+
+.cropperImageWrap {
+  position: relative;
+  width: 100%;
+  max-height: 70vh;
+  aspect-ratio: 3 / 4;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: $radius-md;
+  overflow: hidden;
+}
+
+.cropperImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.cropBox {
+  position: absolute;
+  border: 3rpx solid $color-primary;
+  box-shadow: 0 0 0 9999rpx rgba(0, 0, 0, 0.5);
+  cursor: move;
+}
+
+.cropCorner {
+  position: absolute;
+  width: 48rpx;
+  height: 48rpx;
+  background: $color-primary;
+  border: 4rpx solid $color-text-white;
+  border-radius: 50%;
+  z-index: 10;
+
+  &:active {
+    transform: scale(1.2);
+  }
+}
+
+.cropCornerTL {
+  top: -24rpx;
+  left: -24rpx;
+  cursor: nwse-resize;
+}
+
+.cropCornerTR {
+  top: -24rpx;
+  right: -24rpx;
+  cursor: nesw-resize;
+}
+
+.cropCornerBL {
+  bottom: -24rpx;
+  left: -24rpx;
+  cursor: nesw-resize;
+}
+
+.cropCornerBR {
+  bottom: -24rpx;
+  right: -24rpx;
+  cursor: nwse-resize;
+}
+
+.cropGridH {
+  position: absolute;
+  top: 33.33%;
+  left: 0;
+  right: 0;
+  height: 1rpx;
+  background: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+
+.cropGridV {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 33.33%;
+  width: 1rpx;
+  background: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+
+.cropControls {
+  flex-shrink: 0;
+  padding: $spacing-lg $spacing-xl;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.cropControlRow {
+  margin-bottom: $spacing-md;
+}
+
+.cropControlLabel {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.cropPad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.cropPadRow {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+.cropPadBtn {
+  width: 80rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: $radius-md;
+  color: $color-text-white;
+  font-size: 32rpx;
+  font-weight: $font-weight-bold;
+  transition: all $transition-fast;
+
+  &:active {
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(0.95);
+  }
+}
+
+.cropPadCenter {
+  width: 160rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(37, 99, 235, 0.3);
+  border-radius: $radius-md;
+}
+
+.cropSizeText {
+  font-size: $font-size-sm;
+  color: $color-text-white;
+  font-weight: $font-weight-medium;
+}
+
+.cropperActions {
+  flex-shrink: 0;
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-lg $spacing-xl;
+  padding-bottom: calc($spacing-lg + env(safe-area-inset-bottom));
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.cropperBtnPrimary {
+  @include button-reset;
+  flex: 1.5;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-primary-light, $color-primary);
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-button;
+  transition: all $transition-fast;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.cropperBtnSecondary {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-lg;
+  background: rgba(255, 255, 255, 0.2);
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-button;
+  transition: all $transition-fast;
+
+  &:active {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
